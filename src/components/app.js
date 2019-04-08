@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import ChampionCard from './champion_card';
 import ChampionList from './champion_list';
+import axios from './axios.js';
 
 const axios = require('axios');
 const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
@@ -9,44 +10,44 @@ const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/e
 class App extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       currentView: 'champion-list',
       currentChampionData: '',
       championsData: []
     }
   }
-  
+
   componentDidMount() {
     axios.get(CHAMPIONS_DATA_URL)
-    .then(response => {
-      let championsData = [];
-      for (let key in response.data.data) {
+      .then(response => {
+        let championsData = [];
+        for (let key in response.data.data) {
 
-        championsData.push(response.data.data[key]);
-      }
-      
-      // puts champions data object into state
-      this.setState({championsData: championsData});
-    })
-    .catch(e => {
-      console.log(e);
-    })
+          championsData.push(response.data.data[key]);
+        }
+
+        // puts champions data object into state
+        this.setState({ championsData: championsData });
+      })
+      .catch(e => {
+        console.log(e);
+      })
 
 
   }
 
   handleChampionClick = (champInfo) => {
     let championUrl = `http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion/${champInfo.id}.json`
-    
+
     axios.get(championUrl)
-    .then(response => {
-      this.setState({
-        currentChampionData: response.data.data[champInfo.id],
-        currentView: 'champion-card'
+      .then(response => {
+        this.setState({
+          currentChampionData: response.data.data[champInfo.id],
+          currentView: 'champion-card'
+        })
       })
-    })
-    
+
   }
 
   handleCardClickBack = () => {
@@ -60,7 +61,7 @@ class App extends Component {
   render() {
     if (this.state.currentView === 'champion-card') {
       return (
-        <ChampionCard onCardClickBack={this.handleCardClickBack} currentChampionData={this.state.currentChampionData}/>
+        <ChampionCard onCardClickBack={this.handleCardClickBack} currentChampionData={this.state.currentChampionData} />
       );
     }
 
@@ -74,7 +75,7 @@ class App extends Component {
         </div>
         <ChampionList onChampionClick={this.handleChampionClick} championsData={this.state.championsData} />
       </div>
-      
+
     );
   }
 }
